@@ -231,6 +231,8 @@ impl AuthoringStart {
                 WaitSlotConsensus::Aura(slot) => {
                     runtime::ConfigPreRuntime::Aura(header::AuraPreDigest {
                         slot_number: slot.slot_number,
+                        secret: slot.secret,
+                        proof: slot.proof,
                     })
                 }
             },

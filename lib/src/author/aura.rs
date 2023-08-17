@@ -104,6 +104,8 @@ pub fn next_slot_claim<'a>(
             slot_start_from_unix_epoch,
             slot_end_from_unix_epoch,
             slot_number,
+            secret: [0;48],
+            proof: ([0;48], [0;48], [0;32], [0;48]),
             local_authorities_index,
         })
     } else {
@@ -125,6 +127,15 @@ pub struct SlotClaim {
     pub slot_end_from_unix_epoch: Duration,
     /// Slot number of the claim. Used when building the block.
     pub slot_number: u64,
+    /// the slot secret
+    pub secret: [u8;48],
+    /// dleq proof  of knowledge of slot secret
+    pub proof: (
+        [u8;48],// commitment_1 
+        [u8;48],// commitment_2
+        [u8;32],// witness
+        [u8;48],// "pk" "out"
+    ),
     /// Index within [`Config::local_authorities`] of the authority that can produce the block.
     pub local_authorities_index: usize,
 }
