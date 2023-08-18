@@ -104,8 +104,8 @@ pub fn next_slot_claim<'a>(
             slot_start_from_unix_epoch,
             slot_end_from_unix_epoch,
             slot_number,
-            secret: [0;48],
-            proof: ([0;48], [0;48], [0;32], [0;48]),
+            secret: [2;48],
+            proof: ([1;48], [2;48], [3;32], [4;48]),
             local_authorities_index,
         })
     } else {

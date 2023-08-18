@@ -458,6 +458,7 @@ impl BlockBuild {
                 ) => {
                     shared.logs.push_str(&success.logs);
                     let scale_encoded_header = success.virtual_machine.value().as_ref().to_owned();
+                    // panic!("{:?}", config.virtual_machine.value());
                     return BlockBuild::Finished(Ok(Success {
                         scale_encoded_header,
                         body: shared.block_body,

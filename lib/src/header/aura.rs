@@ -232,7 +232,7 @@ impl<'a> From<AuraAuthorityRef<'a>> for AuraAuthority {
     }
 }
 
-/// AURA slot number pre-digest.
+/// AURA (ETF) pre-digest.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AuraPreDigest {
     /// Slot number when the block was produced.
@@ -272,6 +272,23 @@ impl AuraPreDigest {
     /// Returns an iterator to list of buffers which, when concatenated, produces the SCALE
     /// encoding of that object.
     pub fn scale_encoding(&self) -> impl Iterator<Item = impl AsRef<[u8]> + Clone> + Clone {
-        iter::once(self.slot_number.to_le_bytes())
+        let slot_number_bytes = self.slot_number.to_le_bytes();
+        let proof_bytes = [
+            &self.secret[..],
+            &self.proof.0[..],
+            &self.proof.1[..],
+            &self.proof.2[..],
+            &self.proof.3[..],
+        ];
+        let bytes_iter = std::array::IntoIter::new([
+            Box::from(slot_number_bytes.as_ref()),
+            Box::from(proof_bytes[0]),
+            Box::from(proof_bytes[1]),
+            Box::from(proof_bytes[2]),
+            Box::from(proof_bytes[3]),
+            Box::from(proof_bytes[4]),
+        ]);
+
+        bytes_iter
     }
 }
