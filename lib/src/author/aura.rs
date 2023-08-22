@@ -104,7 +104,7 @@ pub fn next_slot_claim<'a>(
             slot_start_from_unix_epoch,
             slot_end_from_unix_epoch,
             slot_number,
-            secret: [2;48],
+            secret: [2;48], // light clients can't submit valid secrets
             proof: ([1;48], [2;48], [3;32], [4;48]),
             local_authorities_index,
         })

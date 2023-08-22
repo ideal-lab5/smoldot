@@ -251,7 +251,7 @@ pub struct AuraPreDigest {
 impl AuraPreDigest {
     /// Decodes a [`AuraPreDigest`] from a slice of bytes.
     pub fn from_slice(slice: &[u8]) -> Result<Self, Error> {
-        if slice.len() < 8 {
+        if slice.len() < 232 {
             return Err(Error::TooShort);
         }
 
@@ -271,24 +271,19 @@ impl AuraPreDigest {
 
     /// Returns an iterator to list of buffers which, when concatenated, produces the SCALE
     /// encoding of that object.
-    pub fn scale_encoding(&self) -> impl Iterator<Item = impl AsRef<[u8]> + Clone> + Clone {
-        let slot_number_bytes = self.slot_number.to_le_bytes();
+    pub fn scale_encoding(&self) -> impl Iterator<Item = impl AsRef<[u8]> + Clone + '_> + Clone {
         let proof_bytes = [
-            &self.secret[..],
             &self.proof.0[..],
             &self.proof.1[..],
             &self.proof.2[..],
             &self.proof.3[..],
         ];
-        let bytes_iter = std::array::IntoIter::new([
-            Box::from(slot_number_bytes.as_ref()),
-            Box::from(proof_bytes[0]),
-            Box::from(proof_bytes[1]),
-            Box::from(proof_bytes[2]),
-            Box::from(proof_bytes[3]),
-            Box::from(proof_bytes[4]),
-        ]);
 
-        bytes_iter
+        let s = self.slot_number.to_le_bytes();
+        
+        iter::once(either::Left(s))
+            .chain(iter::once(either::Right(&self.secret[..])))
+            .chain(proof_bytes.map(either::Right))
+        
     }
 }
