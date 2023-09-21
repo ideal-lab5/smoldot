@@ -105,7 +105,7 @@ pub fn next_slot_claim<'a>(
             slot_end_from_unix_epoch,
             slot_number,
             secret: [2;48], // light clients can't submit valid secrets
-            proof: ([1;48], [2;48], [3;32], [4;48]),
+            proof: [2;224],
             local_authorities_index,
         })
     } else {
@@ -130,12 +130,7 @@ pub struct SlotClaim {
     /// the slot secret
     pub secret: [u8;48],
     /// dleq proof  of knowledge of slot secret
-    pub proof: (
-        [u8;48],// commitment_1 
-        [u8;48],// commitment_2
-        [u8;32],// witness
-        [u8;48],// "pk" "out"
-    ),
+    pub proof: [u8;224],
     /// Index within [`Config::local_authorities`] of the authority that can produce the block.
     pub local_authorities_index: usize,
 }

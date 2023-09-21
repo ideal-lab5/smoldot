@@ -40,7 +40,7 @@ fn block_building_works() {
         consensus_digest_log_item: super::ConfigPreRuntime::Aura(crate::header::AuraPreDigest {
             slot_number: 1234u64,
             secret: [2;48],
-            proof: ([0;48], [1;48], [2;32], [3;48]),
+            proof: ([0;224]),
         }),
         main_trie_root_calculation_cache: None,
         max_log_level: 0,

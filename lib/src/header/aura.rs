@@ -239,13 +239,8 @@ pub struct AuraPreDigest {
     pub slot_number: u64,
     /// the slot secret
     pub secret: [u8;48],
-	/// dleq proof  of knowledge of slot secret
-	pub proof: (
-		[u8;48],// commitment_1 
-		[u8;48],// commitment_2
-		[u8;32],// witness
-		[u8;48],// "pk" "out"
-	)
+	/// dleq proof  of knowledge of slot secret (is always224 bytes)
+	pub proof: [u8;224],
 }
 
 impl AuraPreDigest {
@@ -257,33 +252,23 @@ impl AuraPreDigest {
 
         let slot_number_bytes: [u8; 8] = slice[0..8].try_into().expect("slice length checked");
         let secret: [u8; 48] = slice[8..56].try_into().expect("slice length checked");
-        let commitment_1: [u8; 48] = slice[56..104].try_into().expect("slice length checked");
-        let commitment_2: [u8; 48] = slice[104..152].try_into().expect("slice length checked");
-        let witness: [u8; 32] = slice[152..184].try_into().expect("slice length checked");
-        let pk_out: [u8; 48] = slice[184..].try_into().expect("slice length checked");
+        let proof: [u8; 224] = slice[56..].try_into().expect("slice length checked");
 
         Ok(AuraPreDigest {
             slot_number: u64::from_le_bytes(slot_number_bytes),
             secret,
-            proof: (commitment_1, commitment_2, witness, pk_out),
+            proof,
         })
     }
 
     /// Returns an iterator to list of buffers which, when concatenated, produces the SCALE
     /// encoding of that object.
     pub fn scale_encoding(&self) -> impl Iterator<Item = impl AsRef<[u8]> + Clone + '_> + Clone {
-        let proof_bytes = [
-            &self.proof.0[..],
-            &self.proof.1[..],
-            &self.proof.2[..],
-            &self.proof.3[..],
-        ];
-
         let s = self.slot_number.to_le_bytes();
-        
+    
         iter::once(either::Left(s))
             .chain(iter::once(either::Right(&self.secret[..])))
-            .chain(proof_bytes.map(either::Right))
+            .chain(iter::once(either::Right(&self.proof[..])))
         
     }
 }
